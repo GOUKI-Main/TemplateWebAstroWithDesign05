@@ -15,22 +15,35 @@ const isActive = (href: string) =>
   href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`);
 ---
 
-<ul class:list={["m-0 list-none p-0", block ? "flex flex-col" : "flex gap-4"]}>
+<ul
+  class:list={[
+    "m-0 list-none p-0",
+    block ? "flex flex-col" : "flex gap-6 lg:gap-9",
+  ]}
+>
   {
     items.map((item) => {
       const active = isActive(item.href);
       return (
-        <li>
+        <li class={block ? "border-b border-border" : undefined}>
           <a
             href={item.href}
             aria-current={active ? "page" : undefined}
             class:list={[
-              "tap-target no-underline hover:text-link",
+              "tap-target no-underline transition-colors duration-300 hover:text-link",
               // justify-start: tap-target centers its content so short labels
               // sit in the middle of their minimum box, but a full-width row
               // in the mobile menu has to stay left-aligned.
-              block && "w-full justify-start py-1",
-              active ? "font-semibold text-fg" : "text-muted",
+              block
+                ? "w-full justify-start py-3 text-lg"
+                : // A hairline that draws in from the left on hover and stays
+                  // drawn for the current page.
+                  [
+                    "relative text-sm font-medium tracking-[0.06em]",
+                    "after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:bg-accent after:transition-transform after:duration-300 after:ease-out hover:after:scale-x-100",
+                    active ? "after:scale-x-100" : "after:scale-x-0",
+                  ],
+              active ? "text-fg" : "text-muted",
             ]}
           >
             {item.label}

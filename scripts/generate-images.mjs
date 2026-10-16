@@ -89,7 +89,7 @@ async function ogFromText() {
   const name = field("name");
   const tagline = field("tagline");
   const css = await readFile(at("src/styles/global.css"), "utf8");
-  const bg = token(css, "bg") ?? "#fbfbf9";
+  const bg = token(css, "bg") ?? "#f5f4f0";
   const fg = token(css, "fg") ?? "#1a1a1a";
   const accent = token(css, "link") ?? fg;
   const font =

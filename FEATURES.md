@@ -53,20 +53,22 @@
 
 ### 1.2 独立して消せる
 
-| #   | 機能                      | 既定 | 実体                                                           | 手順   |
-| --- | ------------------------- | ---- | -------------------------------------------------------------- | ------ |
-| B1  | Cloudflare Web Analytics  | env  | `src/components/Cloudflare.astro`                              | §3.1-a |
-| B2  | Search Console 認証メタ   | env  | `src/components/SEO.astro` の `gscVerification`                | §3.1-b |
-| B3  | リンク先読み（唯一の JS） | ON   | `astro.config.mjs` の `prefetch:`                              | §3.1-c |
-| B4  | FAQ（`<details>`）        | ON   | `src/components/FAQ.astro`                                     | §3.1-d |
-| B7  | モバイルメニュー          | ON   | `src/components/Header.astro` の `<details class="md:hidden">` | §3.1-g |
-| B9  | `robots.txt`              | ON   | `src/pages/robots.txt.ts`                                      | §3.1-i |
-| B10 | LocalBusiness + NAP 表示  | OFF  | `site.ts` の `business:`、`BusinessInfo.astro`、`jsonld.ts`    | §3.1-j |
-| B11 | セキュリティヘッダ        | ON   | `public/_headers`                                              | §3.1-k |
-| B12 | 内部リンク検査            | ON   | `scripts/check-links.mjs`                                      | §3.1-l |
-| B13 | 単体テスト（Vitest）      | ON   | `src/**/*.test.ts`、`vitest.config.ts`                         | §3.1-m |
-| B14 | reduced-motion 対応       | ON   | `src/styles/global.css` の `prefers-reduced-motion`            | §3.1-n |
-| B15 | スキップリンク            | ON   | `src/components/SkipLink.astro`                                | §3.1-o |
+| #   | 機能                      | 既定 | 実体                                                                | 手順   |
+| --- | ------------------------- | ---- | ------------------------------------------------------------------- | ------ |
+| B1  | Cloudflare Web Analytics  | env  | `src/components/Cloudflare.astro`                                   | §3.1-a |
+| B2  | Search Console 認証メタ   | env  | `src/components/SEO.astro` の `gscVerification`                     | §3.1-b |
+| B3  | リンク先読み（唯一の JS） | ON   | `astro.config.mjs` の `prefetch:`                                   | §3.1-c |
+| B4  | FAQ（`<details>`）        | ON   | `src/components/FAQ.astro`                                          | §3.1-d |
+| B7  | モバイルメニュー          | ON   | `src/components/Header.astro` の `<details class="md:hidden">`      | §3.1-g |
+| B9  | `robots.txt`              | ON   | `src/pages/robots.txt.ts`                                           | §3.1-i |
+| B10 | LocalBusiness + NAP 表示  | OFF  | `site.ts` の `business:`、`BusinessInfo.astro`、`jsonld.ts`         | §3.1-j |
+| B11 | セキュリティヘッダ        | ON   | `public/_headers`                                                   | §3.1-k |
+| B12 | 内部リンク検査            | ON   | `scripts/check-links.mjs`                                           | §3.1-l |
+| B13 | 単体テスト（Vitest）      | ON   | `src/**/*.test.ts`、`vitest.config.ts`                              | §3.1-m |
+| B14 | reduced-motion 対応       | ON   | `src/styles/global.css` の `prefers-reduced-motion`                 | §3.1-n |
+| B15 | スキップリンク            | ON   | `src/components/SkipLink.astro`                                     | §3.1-o |
+| B16 | CSS アニメーション        | ON   | `src/styles/global.css` の `══ Motion`、各ページの `data-reveal` 等 | §3.1-p |
+| B17 | 植物の装飾                | ON   | `src/components/Botanical.astro`（`index.astro` から3か所）         | §3.1-q |
 
 ### 1.3 消せるが手当てが要る
 
@@ -184,12 +186,28 @@ Analytics、GSC メタ、theme-color、ダークモード。
 #### n. reduced-motion 対応
 
 `src/styles/global.css` の `@media (prefers-reduced-motion: reduce)` ブロックを
-削除。現状これが効いているのは FAQ の `+` 記号の回転だけです。
+削除。これが効いているのはホバーの transition（ボタンの塗り・画像の拡大・
+FAQ の `+` の回転など）です。スクロール演出（B16）はこれとは別に
+`no-preference` のときだけ動くので、ここを消しても止まりません。
 
 #### o. スキップリンク
 
 `src/components/SkipLink.astro` を削除し、`Base.astro` の import と
 `<SkipLink />` を削除。**アクセシビリティ要件（WCAG 2.4.1）なので非推奨**です。
+
+#### p. CSS アニメーション
+
+`src/styles/global.css` の `══ Motion` から末尾の `.scroll-progress` までを
+削除。マークアップ側の `data-intro` / `data-reveal` / `data-parallax` と
+`[--stagger:N]` `[--delay:…]` クラスは残しても何も起きません（気になれば
+消す）。ヘッダーの `header-raise` と進捗バーの `<span class="scroll-progress">`、
+ヒーローの「Scroll」表示（`scroll-hint-line` を含む `div`）も一緒に消すと
+きれいです。
+
+#### q. 植物の装飾
+
+`src/components/Botanical.astro` を削除し、`index.astro` の import と
+`<Botanical … />`（3か所）を削除。
 
 ---
 

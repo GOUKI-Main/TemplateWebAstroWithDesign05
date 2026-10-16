@@ -1,4 +1,6 @@
 ---
+import SectionHeading from "./SectionHeading.astro";
+
 // Accessible FAQ using native <details>/<summary>. (§7)
 // NOTE: Google removed FAQ rich results (2026-05), so this is for user value
 // and page understanding — not for a rich-result snippet. No FAQPage JSON-LD.
@@ -9,24 +11,27 @@ const { items, heading = "よくある質問" } = Astro.props as {
 };
 ---
 
-<section class="mt-14" aria-labelledby="faq-heading">
-  <h2 id="faq-heading" class="text-xl font-semibold tracking-tight">
-    {heading}
-  </h2>
-  <div class="mt-4 border-t border-border">
+<section aria-labelledby="faq-heading">
+  <SectionHeading en="FAQ" ja={heading} id="faq-heading" />
+  <div class="border-t border-border" data-reveal>
     {
       items.map((item) => (
         <details class="group border-b border-border">
-          <summary class="flex cursor-pointer items-center justify-between gap-4 py-4 font-medium marker:content-['']">
-            {item.q}
+          <summary class="flex cursor-pointer items-center justify-between gap-4 py-5 font-medium marker:content-['']">
+            <span class="flex items-baseline gap-4">
+              <span class="font-en text-lg text-highlight" aria-hidden="true">
+                Q
+              </span>
+              {item.q}
+            </span>
             <span
-              class="text-muted transition-transform group-open:rotate-45"
+              class="text-xl leading-none font-light text-accent transition-transform duration-300 ease-out group-open:rotate-45"
               aria-hidden="true"
             >
               +
             </span>
           </summary>
-          <p class="pb-4 text-muted">{item.a}</p>
+          <p class="mt-0 mb-0 pb-5 pl-8 text-muted">{item.a}</p>
         </details>
       ))
     }

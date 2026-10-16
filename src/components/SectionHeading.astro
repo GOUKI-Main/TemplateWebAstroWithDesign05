@@ -1,0 +1,60 @@
+---
+// Section heading in two styles, both used on the home page:
+// - "center": ( LABEL ) / a short vertical highlight rule / Japanese heading
+//   — the LUMIÈRE demo's section opener.
+// - "start":  an English display title with the Japanese name beside it,
+//   and an optional link pushed to the far end — the Moss Cafe opener.
+// `en` is decorative (aria-hidden); the Japanese heading is the real <h2>.
+const {
+  en,
+  ja,
+  align = "center",
+  id,
+} = Astro.props as {
+  en: string;
+  ja: string;
+  align?: "center" | "start";
+  /** id of the <h2>, for aria-labelledby on the section. */
+  id?: string;
+};
+---
+
+{
+  align === "center" ? (
+    <div class="mb-12 text-center md:mb-16">
+      <p class="label-en m-0" aria-hidden="true" data-reveal>
+        ( {en} )
+      </p>
+      <span
+        class="mx-auto my-5 block h-12 w-px bg-highlight"
+        aria-hidden="true"
+        data-reveal="line-y"
+      />
+      <h2 id={id} class="m-0 text-2xl leading-relaxed md:text-3xl" data-reveal>
+        {ja}
+      </h2>
+    </div>
+  ) : (
+    <div class="mb-10 flex flex-wrap items-baseline gap-x-5 gap-y-2 md:mb-12">
+      <p
+        class="m-0 font-en text-3xl tracking-wide md:text-4xl"
+        aria-hidden="true"
+        data-reveal
+      >
+        {en}
+      </p>
+      <h2
+        id={id}
+        class="m-0 font-sans text-sm font-normal tracking-[0.14em] text-muted"
+        data-reveal
+      >
+        {ja}
+      </h2>
+      {Astro.slots.has("default") && (
+        <div class="basis-full md:ml-auto md:basis-auto" data-reveal>
+          <slot />
+        </div>
+      )}
+    </div>
+  )
+}

@@ -1,9 +1,81 @@
 ---
+import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import { site } from "../content/site";
 import FAQ from "../components/FAQ.astro";
+import Button from "../components/Button.astro";
+import TextLink from "../components/TextLink.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import Botanical from "../components/Botanical.astro";
+import BusinessInfo from "../components/BusinessInfo.astro";
 
-// TODO(setup): Q11 トップページ — 強み3つ / 提供内容 / 行動喚起（CTA）
+// TODO(setup): Q10 写真 — 仮の画像。src/assets/images/ の同名ファイルを差し替える
+// （名前を変えるなら下の import も）。alt も写真の内容に合わせて書き直す
+import heroImg from "../assets/images/hero.jpg";
+import aboutImg from "../assets/images/about.jpg";
+import featureImg from "../assets/images/feature.jpg";
+import service1 from "../assets/images/service-1.jpg";
+import service2 from "../assets/images/service-2.jpg";
+import service3 from "../assets/images/service-3.jpg";
+import service4 from "../assets/images/service-4.jpg";
+
+// TODO(setup): Q11 トップページ — 強み3つ / 提供内容 / 私たちについて / 特長 / 行動喚起（CTA）
+const reasons = [
+  {
+    title: "強み1の見出し",
+    text: "具体的な説明をここに書きます。お客様にとって何が嬉しいのかを1〜2文で。",
+  },
+  {
+    title: "強み2の見出し",
+    text: "具体的な説明をここに書きます。お客様にとって何が嬉しいのかを1〜2文で。",
+  },
+  {
+    title: "強み3の見出し",
+    text: "具体的な説明をここに書きます。お客様にとって何が嬉しいのかを1〜2文で。",
+  },
+];
+
+const services = [
+  {
+    img: service1,
+    alt: "仮の画像（商品・サービスの写真に差し替え）",
+    name: "商品・サービス名1",
+    price: "¥0,000〜",
+    text: "特徴をひとことで説明します。",
+  },
+  {
+    img: service2,
+    alt: "仮の画像（商品・サービスの写真に差し替え）",
+    name: "商品・サービス名2",
+    price: "¥0,000〜",
+    text: "特徴をひとことで説明します。",
+  },
+  {
+    img: service3,
+    alt: "仮の画像（商品・サービスの写真に差し替え）",
+    name: "商品・サービス名3",
+    price: "¥0,000〜",
+    text: "特徴をひとことで説明します。",
+  },
+  {
+    img: service4,
+    alt: "仮の画像（商品・サービスの写真に差し替え）",
+    name: "商品・サービス名4",
+    price: "¥0,000〜",
+    text: "特徴をひとことで説明します。",
+  },
+];
+
+// Reveal offsets for items in a row, so they arrive as a wave. Listed as
+// literal class names because Tailwind only compiles classes it can read in
+// the source.
+const stagger = [
+  "[--stagger:0]",
+  "[--stagger:1]",
+  "[--stagger:2]",
+  "[--stagger:3]",
+];
+
 // TODO(setup): Q12 よくある質問（不要なら FAQ ごと削除）
 const faqs = [
   {
@@ -17,29 +89,262 @@ const faqs = [
 ];
 ---
 
-<Base description={site.description} canonicalPath="/">
-  <article class="prose">
-    <h1>{site.tagline}</h1>
-    <p class="lead">{site.description}</p>
+<Base description={site.description} canonicalPath="/" fullBleed>
+  {/* ── Hero: copy on the left, photo on the right (photo first on phones) */}
+  <section
+    class="grid overflow-hidden md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]"
+  >
+    <div
+      class="relative isolate flex flex-col justify-center px-6 pt-12 pb-16 md:py-20 md:pr-14 md:pl-[max(1.5rem,calc((100vw-72rem)/2+1.5rem))]"
+    >
+      <p class="label-en m-0" data-intro>Welcome</p>
+      <h1
+        class="mt-5 mb-0 text-3xl leading-normal [--delay:120ms] md:text-4xl lg:text-5xl"
+        data-intro
+      >
+        {site.tagline}
+      </h1>
+      <p class="mt-8 mb-0 max-w-[34em] text-muted [--delay:300ms]" data-intro>
+        {site.description}
+      </p>
+      <div
+        class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-5 [--delay:450ms]"
+        data-intro
+      >
+        {
+          site.cta && (
+            <Button href={site.cta.href} class="max-sm:w-full">
+              {site.cta.label}
+            </Button>
+          )
+        }
+        <TextLink href="/about">私たちについて</TextLink>
+      </div>
 
-    <section>
-      <h2>選ばれる理由</h2>
-      <ul>
-        <li><strong>強み1</strong> — 具体的な説明。</li>
-        <li><strong>強み2</strong> — 具体的な説明。</li>
-        <li><strong>強み3</strong> — 具体的な説明。</li>
+      <Botanical
+        class="absolute -right-4 -bottom-6 -z-10 w-28 rotate-[8deg] text-accent opacity-25 md:w-36 lg:w-44"
+      />
+
+      {/* "Scroll" hint: an endless drawing line (desktop only). */}
+      <div
+        class="absolute bottom-0 left-[max(1.5rem,calc((100vw-72rem)/2+1.5rem))] hidden items-end gap-3 md:flex"
+        aria-hidden="true"
+      >
+        <span class="label-en text-[0.625rem] [writing-mode:vertical-rl]"
+          >Scroll</span
+        >
+        <span class="block h-16 w-px overflow-hidden bg-border">
+          <span class="scroll-hint-line block h-full w-full bg-highlight"
+          ></span>
+        </span>
+      </div>
+    </div>
+
+    <div
+      class="relative -order-1 h-[clamp(16rem,60vw,26rem)] overflow-hidden [--delay:200ms] md:order-none md:h-auto md:min-h-[clamp(26rem,46vw,38rem)]"
+      data-intro="mask"
+    >
+      <div class="absolute inset-0" data-parallax>
+        <Image
+          src={heroImg}
+          alt="仮の画像（お店やサービスの雰囲気が伝わる写真に差し替え）"
+          loading="eager"
+          fetchpriority="high"
+          widths={[800, 1200, 1600]}
+          sizes="(max-width: 768px) 100vw, 58vw"
+          class="size-full object-cover"
+        />
+      </div>
+    </div>
+  </section>
+
+  {/* ── Reasons: three numbered strengths */}
+  <section
+    class="section-y border-t border-border bg-surface"
+    aria-labelledby="reasons-heading"
+  >
+    <div class="container-page">
+      <SectionHeading en="Reasons" ja="選ばれる理由" id="reasons-heading" />
+      <ol class="m-0 grid list-none gap-10 p-0 md:grid-cols-3 md:gap-12">
+        {
+          reasons.map((r, i) => (
+            <li
+              class:list={["border-t border-border pt-6", stagger[i]]}
+              data-reveal
+            >
+              <p class="m-0 font-en text-3xl text-highlight" aria-hidden="true">
+                {String(i + 1).padStart(2, "0")}
+              </p>
+              <h3 class="mt-3 mb-0 text-lg">{r.title}</h3>
+              <p class="mt-3 mb-0 text-sm text-muted">{r.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  {/* ── About teaser: photo + copy */}
+  <section
+    class="section-y border-t border-border"
+    aria-labelledby="about-heading"
+  >
+    <div
+      class="container-page relative grid items-center gap-10 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-20"
+    >
+      <div class="overflow-hidden rounded-md" data-reveal="mask">
+        <Image
+          src={aboutImg}
+          alt="仮の画像（店内・仕事風景などの写真に差し替え）"
+          widths={[600, 900, 1200]}
+          sizes="(max-width: 768px) 100vw, 45vw"
+          class="aspect-[4/3] w-full object-cover"
+        />
+      </div>
+      <div class="md:pr-16 lg:pr-28">
+        <p class="label-en m-0" aria-hidden="true" data-reveal>About</p>
+        <h2
+          id="about-heading"
+          class="mt-4 mb-0 text-2xl leading-relaxed md:text-3xl"
+          data-reveal
+        >
+          ゆっくり、丁寧に、自然体で。
+        </h2>
+        <span
+          class="my-6 block h-px w-12 bg-accent"
+          aria-hidden="true"
+          data-reveal="line"></span>
+        <p class="m-0 text-muted" data-reveal>
+          {
+            site.name
+          }の想いや、大切にしていることを2〜3文で紹介します。どんな方に、どんな時間を過ごしてほしいのかを書くと伝わりやすくなります。
+        </p>
+        <div class="mt-8" data-reveal>
+          <TextLink href="/about">私たちについて</TextLink>
+        </div>
+      </div>
+      <Botanical
+        class="absolute top-1/2 -right-2 hidden w-20 -translate-y-1/2 text-accent opacity-40 lg:block"
+      />
+    </div>
+  </section>
+
+  {/* ── Services: card grid */}
+  <section
+    class="section-y border-t border-border bg-surface"
+    aria-labelledby="services-heading"
+  >
+    <div class="container-page">
+      <SectionHeading
+        en="Services"
+        ja="提供しているもの"
+        align="start"
+        id="services-heading"
+      >
+        <TextLink href="/contact">ご相談・お問い合わせ</TextLink>
+      </SectionHeading>
+
+      <ul
+        class="m-0 grid list-none grid-cols-2 gap-x-5 gap-y-10 p-0 lg:grid-cols-4 lg:gap-8"
+      >
+        {
+          services.map((s, i) => (
+            <li class:list={["group flex flex-col", stagger[i]]} data-reveal>
+              <div class="img-zoom rounded-md">
+                <Image
+                  src={s.img}
+                  alt={s.alt}
+                  widths={[400, 600]}
+                  sizes="(max-width: 1024px) 45vw, 25vw"
+                  class="aspect-square w-full object-cover"
+                />
+              </div>
+              <div class="mt-4 flex flex-wrap items-baseline justify-between gap-x-3 border-b border-border pb-2.5">
+                <h3 class="m-0 font-sans text-[0.95rem] font-semibold tracking-wider">
+                  {s.name}
+                </h3>
+                <span class="text-sm whitespace-nowrap text-muted">
+                  {s.price}
+                </span>
+              </div>
+              <p class="mt-2.5 mb-0 text-[0.8125rem] leading-relaxed text-muted">
+                {s.text}
+              </p>
+            </li>
+          ))
+        }
       </ul>
-    </section>
+    </div>
+  </section>
 
-    <section>
-      <h2>提供しているもの</h2>
-      <p>商品・サービス・メニューの概要をここに書きます。</p>
-    </section>
+  {/* ── Feature: photo + brand-colored panel */}
+  <section
+    class="grid border-t border-border md:grid-cols-2"
+    aria-labelledby="feature-heading"
+  >
+    <div
+      class="relative h-[clamp(15rem,64vw,24rem)] overflow-hidden md:h-auto md:min-h-[clamp(22rem,38vw,32rem)]"
+    >
+      <div class="absolute inset-0" data-parallax>
+        <Image
+          src={featureImg}
+          alt="仮の画像（こだわりが伝わる写真に差し替え）"
+          widths={[600, 900, 1200]}
+          sizes="(max-width: 768px) 100vw, 50vw"
+          class="size-full object-cover"
+        />
+      </div>
+    </div>
+    <div
+      class="relative isolate flex flex-col justify-center overflow-hidden bg-accent px-6 py-16 text-on-accent md:py-24 md:pr-[max(1.5rem,calc((100vw-72rem)/2+1.5rem))] md:pl-16 lg:pl-20"
+    >
+      <p class="label-en m-0 text-on-accent" aria-hidden="true" data-reveal>
+        Our Craft
+      </p>
+      <h2
+        id="feature-heading"
+        class="mt-4 mb-0 text-2xl leading-relaxed text-on-accent md:text-3xl"
+        data-reveal
+      >
+        いちばんのこだわりを、ひとことで。
+      </h2>
+      <p class="mt-7 mb-0 max-w-[30em]" data-reveal>
+        素材・技術・空間など、ほかにはない特長をここで詳しく伝えます。写真と合わせて、なぜそうしているのかを書くと印象に残ります。
+      </p>
+      <div class="mt-9" data-reveal>
+        <TextLink href="/about" onAccent>詳しく見る</TextLink>
+      </div>
+      <Botanical
+        class="absolute -right-6 -bottom-4 -z-10 w-40 rotate-[12deg] text-on-accent opacity-20 md:w-56"
+      />
+    </div>
+  </section>
 
-    <p>
-      <a href="/contact">お問い合わせはこちら</a>
-    </p>
-  </article>
+  {/* ── FAQ */}
+  <div class="section-y border-t border-border">
+    <div class="container-narrow">
+      <FAQ items={faqs} />
+    </div>
+  </div>
 
-  <FAQ items={faqs} />
+  {/* ── Call to action */}
+  <section
+    class="section-y border-t border-border bg-surface"
+    aria-labelledby="cta-heading"
+  >
+    <div class="container-narrow text-center">
+      <SectionHeading en="Contact" ja="お問い合わせ" id="cta-heading" />
+      <p class="m-0 text-muted" data-reveal>ご質問・ご相談はお気軽にどうぞ。</p>
+      {
+        site.cta && (
+          <div class="mt-10" data-reveal>
+            <Button href={site.cta.href}>{site.cta.label}</Button>
+          </div>
+        )
+      }
+      <div class="mx-auto mt-10 inline-block text-left">
+        <BusinessInfo />
+      </div>
+    </div>
+  </section>
 </Base>

@@ -1,24 +1,47 @@
 ---
 import { site, type SiteNavItem } from "../content/site";
 import NavLinks from "./NavLinks.astro";
+import Button from "./Button.astro";
 
-const { brand = site.name, nav = site.nav } = Astro.props as {
+const {
+  brand = site.name,
+  nav = site.nav,
+  cta = site.cta,
+} = Astro.props as {
   brand?: string;
   nav?: SiteNavItem[];
+  cta?: SiteNavItem;
 };
 ---
 
 {
   /* sticky (not fixed) so the header keeps its own space in the flow — no
-     magic top padding on <main>. bg + z keep scrolled content from showing
-     through, and `sticky` is the positioned ancestor the mobile menu panel
-     anchors to. */
+     magic top padding on <main>. The translucent bg + blur keep scrolled
+     content from showing through, z keeps it on top, and `sticky` is the
+     positioned ancestor the mobile menu panel anchors to. `header-raise`
+     fades a shadow in once the page scrolls (CSS scroll timeline). */
 }
-<header class="sticky top-0 z-40 w-full border-b border-border bg-bg">
-  <div class="container-page flex items-center justify-between gap-4 py-4">
-    <a class="tap-target font-bold tracking-tight no-underline" href="/"
-      >{brand}</a
+<header
+  class="header-raise sticky top-0 z-40 w-full border-b border-border bg-bg/90 backdrop-blur-md"
+>
+  <div class="container-page flex h-18 items-center gap-6 md:h-22 lg:gap-12">
+    <a
+      class="tap-target shrink-0 gap-3 text-fg no-underline"
+      href="/"
+      aria-label={`${brand} トップへ`}
     >
+      <img
+        src="/favicon.svg"
+        alt=""
+        width="40"
+        height="40"
+        class="size-9 md:size-10"
+      />
+      <span
+        class="font-heading text-lg font-medium tracking-[0.08em] md:text-xl"
+        >{brand}</span
+      >
+    </a>
 
     {
       /* One landmark, two renderings: a disclosure on small screens and an
@@ -26,7 +49,7 @@ const { brand = site.name, nav = site.nav } = Astro.props as {
          operable menu with zero JavaScript; navigating reloads the page,
          which closes it. */
     }
-    <nav aria-label="主要ナビゲーション">
+    <nav aria-label="主要ナビゲーション" class="ml-auto">
       <details class="md:hidden">
         {
           /* list-none + marker:content-[''] look redundant next to
@@ -36,19 +59,28 @@ const { brand = site.name, nav = site.nav } = Astro.props as {
              JavaScript-free navigation control. */
         }
         <summary
-          class="tap-target cursor-pointer list-none rounded-lg border border-border px-3 text-sm marker:content-['']"
+          class="tap-target cursor-pointer list-none rounded-full border border-fg px-4 font-en text-xs tracking-[0.2em] marker:content-['']"
         >
-          メニュー
+          MENU
         </summary>
         {
           /* max-height so a long nav scrolls inside the panel instead of
             running off a short (or landscape) phone screen. */
         }
         <div
-          class="absolute inset-x-0 top-full max-h-[75dvh] overflow-y-auto overscroll-contain border-b border-border bg-bg"
+          class="menu-panel absolute inset-x-0 top-full max-h-[calc(100dvh-4.5rem)] overflow-y-auto overscroll-contain border-b border-border bg-bg"
         >
-          <div class="container-page py-2">
+          <div class="container-page py-4">
             <NavLinks items={nav} block />
+            {
+              cta && (
+                <div class="mt-6 pb-4">
+                  <Button href={cta.href} class="w-full">
+                    {cta.label}
+                  </Button>
+                </div>
+              )
+            }
           </div>
         </div>
       </details>
@@ -57,5 +89,18 @@ const { brand = site.name, nav = site.nav } = Astro.props as {
         <NavLinks items={nav} />
       </div>
     </nav>
+
+    {
+      cta && (
+        <Button href={cta.href} class="hidden min-w-0 md:inline-flex">
+          {cta.label}
+        </Button>
+      )
+    }
   </div>
+
+  {/* Reading-progress hairline (CSS scroll timeline; hidden without one). */}
+  <span
+    class="scroll-progress absolute inset-x-0 -bottom-px h-px bg-highlight"
+    aria-hidden="true"></span>
 </header>
