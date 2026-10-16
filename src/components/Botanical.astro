@@ -1,0 +1,52 @@
+---
+// Decorative botanical sprig (a eucalyptus-like stem) — the illustration
+// motif of the design, drawn in currentColor so it re-themes with the
+// tokens. Size and placement come from the caller's class; it is always
+// aria-hidden and ignores pointer events.
+const { class: className } = Astro.props as { class?: string };
+
+// Leaves alternate left/right up a gently curving stem, shrinking toward
+// the tip. Computed rather than hand-placed so the spacing stays even.
+const leaves = Array.from({ length: 9 }, (_, i) => {
+  const t = i / 8;
+  const y = 224 - i * 25;
+  const x = 60 + Math.sin(t * Math.PI) * 6;
+  const side = i % 2 === 0 ? -1 : 1;
+  const size = 1 - t * 0.45;
+  return {
+    cx: x + side * 15 * size,
+    cy: y - 6,
+    rx: 9 * size,
+    ry: 19 * size,
+    rotate: side * 52,
+    opacity: 0.55 + (i % 3) * 0.15,
+  };
+});
+---
+
+<svg
+  class:list={["pointer-events-none", className]}
+  viewBox="0 0 120 250"
+  fill="currentColor"
+  aria-hidden="true"
+>
+  <path
+    d="M58 248 C 54 190, 70 120, 60 10"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.6"
+    stroke-linecap="round"></path>
+  {
+    leaves.map((l) => (
+      <ellipse
+        cx={l.cx}
+        cy={l.cy}
+        rx={l.rx}
+        ry={l.ry}
+        opacity={l.opacity}
+        transform={`rotate(${l.rotate} ${l.cx} ${l.cy})`}
+      />
+    ))
+  }
+  <ellipse cx="60" cy="8" rx="5" ry="10" opacity="0.8"></ellipse>
+</svg>

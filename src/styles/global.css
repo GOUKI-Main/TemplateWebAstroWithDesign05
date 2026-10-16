@@ -14,28 +14,60 @@
 /* Design tokens — single source for colors & fonts. Exposed as CSS variables
    AND as Tailwind utilities (bg-bg, text-fg, text-muted, border-border, …).
    These are the LIGHT values; the dark overrides live below.
+   The default palette is "moss": warm off-white paper, deep blue-green ink,
+   a moss-green accent and a muted gold for hairlines. Every text pairing is
+   ≥ 4.5:1 in both schemes (accent/on-accent included) — re-check when
+   swapping values.
    TODO(setup): Q9 配色 — ライト/ダーク両方の値と site.ts の themeColor* を揃える */
 @theme {
-  --color-bg: #fbfbf9;
-  --color-fg: #1a1a1a;
-  --color-muted: #5b5b5b;
-  --color-link: #0b3d91;
-  --color-border: rgba(0, 0, 0, 0.12);
-  --color-surface: #f2f2ee;
+  --color-bg: #f5f4f0;
+  --color-fg: #2b3a3f;
+  --color-muted: #4f5a5c;
+  --color-link: #435847;
+  --color-border: rgba(74, 74, 74, 0.24);
+  --color-surface: #ffffff;
+  /* Brand fill (buttons, the feature panel, the footer bar) and the text
+     that sits on it. accent-strong is the hover/pressed fill. */
+  --color-accent: #57705b;
+  --color-accent-strong: #435847;
+  --color-on-accent: #f5f4f0;
+  /* Hairlines, dividers, the scroll-progress bar and small English labels. */
+  --color-highlight: #80653f;
 
   --font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
     "Courier New", monospace;
+
+  /* Small radii keep the quiet, printed-paper look. */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+
+  /* One pair of curves for every transition and animation, so hover states
+     and scroll reveals share the same feel (≒ GSAP power3.out / inOut). */
+  --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
 /* System fonts only: nothing to download, nothing to license, no layout
    shift. Latin falls to the OS UI face; Japanese is named explicitly so
-   Windows/Android don't pick an older CJK face over the modern one. */
+   Windows/Android don't pick an older CJK face over the modern one.
+   - sans:    body copy.
+   - heading: Japanese headings. Rounded gothic where the OS ships one
+              (macOS: 筑紫A丸ゴシック / ヒラギノ丸ゴ), the body gothic elsewhere.
+   - en:      English display labels (section titles, numbers, prices). An
+              old-style serif that every OS has some version of. */
 @theme {
   --font-sans:
     system-ui, -apple-system, "Segoe UI", "Hiragino Sans",
     "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", "Yu Gothic",
     Meiryo, sans-serif;
+  --font-heading:
+    "Tsukushi A Round Gothic", "Hiragino Maru Gothic ProN", system-ui,
+    -apple-system, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN",
+    "Noto Sans JP", "Yu Gothic UI", "Yu Gothic", Meiryo, sans-serif;
+  --font-en:
+    "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia,
+    "Times New Roman", serif;
 }
 
 /* Dark mode: OS preference only — no toggle, so no runtime JavaScript and no
@@ -44,12 +76,16 @@
    Keep `theme-color` in src/content/site.ts in sync with --color-bg. */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #14140f;
-    --color-fg: #ecece6;
-    --color-muted: #a3a39c;
-    --color-link: #9dbcff;
+    --color-bg: #151a18;
+    --color-fg: #e8e6df;
+    --color-muted: #a9b1ab;
+    --color-link: #a9c4ad;
     --color-border: rgba(255, 255, 255, 0.16);
-    --color-surface: #1e1e18;
+    --color-surface: #1d2421;
+    --color-accent: #8fae94;
+    --color-accent-strong: #a9c4ad;
+    --color-on-accent: #121714;
+    --color-highlight: #d2b48a;
   }
 }
 
@@ -57,6 +93,25 @@
    default canvas follow along. */
 :root {
   color-scheme: light dark;
+}
+
+/* Base rhythm: generous line-height and a little tracking, which Japanese
+   text needs to breathe. Headings use the heading face everywhere. */
+body {
+  line-height: 1.9;
+  letter-spacing: 0.04em;
+}
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-highlight);
+  outline-offset: 3px;
 }
 
 /* Tailwind Typography ships its own gray ramp, which would leave Markdown
@@ -84,6 +139,34 @@
   --tw-prose-td-borders: var(--color-border);
 }
 
+/* Prose typography in the house style. Sizes, weights and ornaments only —
+   colors stay on the --tw-prose-* bindings above. */
+.prose {
+  line-height: 2;
+}
+.prose :where(h1, h2, h3):not(:where(.not-prose *)) {
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+/* h1 gets the short highlight rule the section headings use. */
+.prose :where(h1):not(:where(.not-prose *))::after {
+  content: "";
+  display: block;
+  width: 3rem;
+  height: 1px;
+  margin-top: 1.25rem;
+  background: var(--color-highlight);
+}
+.prose :where(h2):not(:where(.not-prose *)) {
+  padding-left: 0.875rem;
+  border-left: 2px solid var(--color-accent);
+  line-height: 1.5;
+}
+.prose :where(a):not(:where(.not-prose *)) {
+  text-underline-offset: 0.25em;
+  text-decoration-thickness: 1px;
+}
+
 /* A long URL, hash or identifier must never push the page sideways on a
    phone — a horizontally scrolling body is the single most common mobile
    defect. `anywhere`, not `break-word`: per CSS Text 3 only `anywhere`
@@ -105,12 +188,12 @@ body {
 }
 
 /* Sticky header: keep in-page anchor targets visible below it. The header is
-   a single row at every breakpoint (the mobile menu is a disclosure, not a
-   second row), but that row is ~77px once `tap-target` gives it a 44px child
-   on touch: 2rem of py-4 + 2.75rem + 1px border. 5.5rem leaves ~11px of
-   clearance — grow this if the header ever gains height. */
+   a single fixed-height row at every breakpoint (the mobile menu is a
+   disclosure, not a second row): h-18 (4.5rem) on small screens, h-22
+   (5.5rem) from md up, plus a 1px border. 6.5rem leaves ~1rem of clearance —
+   grow this if the header ever gains height. */
 html {
-  scroll-padding-top: 5.5rem;
+  scroll-padding-top: 6.5rem;
 }
 
 /* The minimum interactive target size, defined once.
@@ -146,7 +229,9 @@ html {
   min-width: var(--tap-min);
 }
 
-/* Respect a reduced-motion preference for the few transitions we ship. */
+/* Respect a reduced-motion preference for the few transitions we ship.
+   (The motion system below is additionally gated on `no-preference`, so it
+   never runs at all for these users — this rule covers hover transitions.) */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -158,10 +243,321 @@ html {
   }
 }
 
-/* Shared centered content column (header inner, main, footer inner). */
+/* Shared centered content column (header inner, full-bleed sections,
+   footer inner). */
 @utility container-page {
   margin-inline: auto;
   width: 100%;
-  max-width: 900px;
+  max-width: 72rem;
   padding-inline: 1.5rem;
+}
+
+/* Reading column for prose pages (Base's <main> when not full-bleed). */
+@utility container-narrow {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 48rem;
+  padding-inline: 1.5rem;
+}
+
+/* Vertical rhythm of a home-page section: 64px on phones, 96px from md. */
+@utility section-y {
+  padding-block: 4rem;
+  @media (width >= 48rem) {
+    padding-block: 6rem;
+  }
+}
+
+/* Small English label above/beside a heading ("( ABOUT )", "01", prices). */
+@utility label-en {
+  font-family: var(--font-en);
+  font-size: 0.8125rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-highlight);
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────────
+   A fill slides in from the left on hover/focus (borrowed from the LUMIÈRE
+   demo). The fill is a ::before behind the label, so the label needs no
+   wrapper. Already ≥ 48px tall: do NOT add `tap-target` (it would also
+   override the display). */
+@utility btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  min-height: 3rem;
+  min-width: 11rem;
+  padding-inline: 1.75rem;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  transition:
+    color 0.4s var(--ease-out),
+    border-color 0.4s var(--ease-out);
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--color-accent-strong);
+    transform: translateX(-101%);
+    transition: transform 0.4s var(--ease-out);
+  }
+  &:hover,
+  &:focus-visible {
+    border-color: var(--color-accent-strong);
+  }
+  &:hover::before,
+  &:focus-visible::before {
+    transform: none;
+  }
+}
+
+/* Outline variant: transparent until hovered, then the same slide fill. */
+@utility btn-outline {
+  background: transparent;
+  color: var(--color-link);
+  &:hover,
+  &:focus-visible {
+    color: var(--color-on-accent);
+  }
+}
+
+/* Image that zooms slightly on hover of itself or of a `group` ancestor.
+   Put it on the overflow-hidden wrapper; the <img> inside scales. */
+@utility img-zoom {
+  overflow: hidden;
+  & img {
+    transition: transform 0.8s var(--ease-out);
+  }
+  &:hover img,
+  :where(.group):hover & img {
+    transform: scale(1.05);
+  }
+}
+
+/* ══ Motion ════════════════════════════════════════════════════════════════
+   Scroll reveals and the hero intro, in CSS only — no runtime JavaScript
+   (CLAUDE.md rule 6). Markup opts in with data attributes:
+
+     data-intro                 … fades up once on page load (hero copy)
+     data-intro="mask"          … image wrapper opens bottom→top on load
+     data-reveal                … fades up as it scrolls into view
+     data-reveal="left|right|scale"
+     data-reveal="mask"         … image wrapper opens bottom→top on scroll
+     data-reveal="line"         … a rule draws left→right ("line-y": downward)
+     data-parallax              … slow vertical drift while it crosses the
+                                  viewport (put it on an <img> inside an
+                                  overflow-hidden box; it is pre-scaled)
+
+   Stagger with the `--stagger` custom property (0, 1, 2 …) — e.g. the
+   Tailwind class `[--stagger:1]` — and delay intro steps with `--delay`
+   (e.g. `[--delay:300ms]`).
+
+   Progressive enhancement, two gates:
+   1. `prefers-reduced-motion: no-preference` — otherwise nothing moves.
+   2. `@supports (animation-timeline: view())` for the scroll-driven parts —
+      browsers without scroll timelines simply show everything, in place.
+   The hidden starting state lives only inside the keyframes, so content is
+   never left invisible when either gate is closed. */
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    translate: 0 2rem;
+  }
+}
+@keyframes reveal-left {
+  from {
+    opacity: 0;
+    translate: -2rem 0;
+  }
+}
+@keyframes reveal-right {
+  from {
+    opacity: 0;
+    translate: 2rem 0;
+  }
+}
+@keyframes reveal-scale {
+  from {
+    opacity: 0;
+    scale: 0.92;
+  }
+}
+@keyframes reveal-mask {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes reveal-mask-inner {
+  from {
+    scale: 1.12;
+  }
+}
+@keyframes draw-x {
+  from {
+    scale: 0 1;
+  }
+}
+@keyframes draw-y {
+  from {
+    scale: 1 0;
+  }
+}
+@keyframes grow-x {
+  from {
+    scale: 0 1;
+  }
+  to {
+    scale: 1 1;
+  }
+}
+@keyframes drift {
+  from {
+    translate: 0 -5%;
+  }
+  to {
+    translate: 0 5%;
+  }
+}
+@keyframes raise {
+  to {
+    box-shadow: 0 1px 12px rgb(0 0 0 / 0.08);
+  }
+}
+@keyframes scroll-hint {
+  0% {
+    scale: 1 0;
+    transform-origin: top;
+  }
+  50% {
+    scale: 1 1;
+    transform-origin: top;
+  }
+  51% {
+    transform-origin: bottom;
+  }
+  100% {
+    scale: 1 0;
+    transform-origin: bottom;
+  }
+}
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    translate: 0 -0.5rem;
+  }
+}
+
+[data-reveal="line"] {
+  transform-origin: left center;
+}
+[data-reveal="line-y"] {
+  transform-origin: top center;
+}
+[data-parallax] {
+  scale: 1.12;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Load-time intro: plays once, timed. */
+  [data-intro] {
+    animation: reveal-up 0.9s var(--ease-out) both;
+    animation-delay: var(--delay, 0ms);
+  }
+  [data-intro="mask"] {
+    animation: reveal-mask 1.2s var(--ease-in-out) both;
+    animation-delay: var(--delay, 0ms);
+  }
+  [data-intro="mask"] img {
+    animation: reveal-mask-inner 1.6s var(--ease-out) both;
+    animation-delay: var(--delay, 0ms);
+  }
+
+  /* Endless "scroll down" hint line in the hero. */
+  .scroll-hint-line {
+    animation: scroll-hint 2.4s var(--ease-in-out) infinite;
+  }
+
+  /* Mobile menu panel: fades down when the <details> opens. */
+  details[open] > .menu-panel {
+    animation: menu-in 0.4s var(--ease-out);
+  }
+
+  @supports (animation-timeline: view()) {
+    /* Each reveal plays while its element travels the first stretch of the
+       viewport; --stagger pushes later siblings a little further down so a
+       row of cards arrives as a wave. The shorthand resets
+       animation-timeline, so the timeline is always declared after it. */
+    [data-reveal] {
+      animation: reveal-up var(--ease-out) both;
+      animation-timeline: view();
+      animation-range: cover calc(2% + var(--stagger, 0) * 4%) cover
+        calc(28% + var(--stagger, 0) * 4%);
+    }
+    [data-reveal="left"] {
+      animation-name: reveal-left;
+    }
+    [data-reveal="right"] {
+      animation-name: reveal-right;
+    }
+    [data-reveal="scale"] {
+      animation-name: reveal-scale;
+    }
+    [data-reveal="mask"] {
+      animation-name: reveal-mask;
+      animation-timing-function: var(--ease-in-out);
+    }
+    [data-reveal="mask"] img {
+      animation: reveal-mask-inner var(--ease-out) both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 45%;
+    }
+    [data-reveal="line"] {
+      animation-name: draw-x;
+    }
+    [data-reveal="line-y"] {
+      animation-name: draw-y;
+    }
+
+    [data-parallax] {
+      animation: drift linear both;
+      animation-timeline: view();
+    }
+  }
+
+  @supports (animation-timeline: scroll()) {
+    /* Header: a soft shadow fades in over the first 80px of scroll, and a
+       1px highlight bar tracks reading progress across the whole page. */
+    .header-raise {
+      animation: raise linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 80px;
+    }
+    .scroll-progress {
+      animation: grow-x linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+}
+
+/* Without scroll timelines (or with reduced motion) the progress bar would
+   be a meaningless full-width line, so it starts collapsed. */
+.scroll-progress {
+  scale: 0 1;
+  transform-origin: left center;
 }

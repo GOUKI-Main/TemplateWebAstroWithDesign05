@@ -1,0 +1,27 @@
+---
+import Arrow from "./Arrow.astro";
+
+// Understated "read more" link: text + arrow over a 1px rule. `onAccent` is
+// the version for the brand-colored panel.
+const {
+  href,
+  onAccent = false,
+  class: className,
+} = Astro.props as {
+  href: string;
+  onAccent?: boolean;
+  class?: string;
+};
+---
+
+<a
+  href={href}
+  class:list={[
+    "group tap-target gap-3.5 border-b border-current pb-1 text-sm font-medium tracking-wider no-underline transition-opacity duration-300 hover:opacity-70",
+    onAccent ? "text-on-accent" : "text-link",
+    className,
+  ]}
+>
+  <slot />
+  <Arrow />
+</a>

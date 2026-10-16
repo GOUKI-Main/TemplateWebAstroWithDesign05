@@ -66,6 +66,8 @@ export type SiteConfig = {
    *  if you embed or post to it. */
   contactFormUrl?: string;
   nav: SiteNavItem[];
+  /** The one call-to-action button in the header (and the mobile menu). */
+  cta?: SiteNavItem;
   /** Secondary links shown in the footer (policy pages and the like). */
   footerNav?: SiteNavItem[];
   seo: {
@@ -144,6 +146,8 @@ export const site: SiteConfig = {
     { label: "私たちについて", href: "/about" },
     { label: "お問い合わせ", href: "/contact" },
   ],
+  // TODO(setup): Q7 ヘッダー右端のボタン（一番してほしい行動へ。予約・問い合わせ等）
+  cta: { label: "お問い合わせ", href: "/contact" },
   footerNav: [{ label: "サイトポリシー", href: "/legal" }],
   seo: {
     ogImage: "/images/og/og-default.jpg",
@@ -154,8 +158,8 @@ export const site: SiteConfig = {
     robots:
       "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1",
     // TODO(setup): Q9 配色を決めたら global.css の --color-bg（ライト/ダーク）と揃える
-    themeColor: "#fbfbf9",
-    themeColorDark: "#14140f",
+    themeColor: "#f5f4f0",
+    themeColorDark: "#151a18",
     noindexPaths: [],
     // 公開後: Search Console の「HTMLタグ」の content の値
     // googleSiteVerification: "XXXXXXXX",

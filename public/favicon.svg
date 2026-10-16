@@ -1,5 +1,11 @@
 <!-- TODO(setup): Q10 ロゴ — 差し替えたら `pnpm images icons` で PNG/ICO を再生成 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ロゴ">
-  <rect width="64" height="64" rx="14" fill="#1a1a1a"/>
-  <path d="M32 13 L45 47 L32 39.5 L19 47 Z" fill="#fbfbf9"/>
+  <rect width="64" height="64" rx="14" fill="#57705b"/>
+  <path d="M32 52 C 31 40, 33 26, 32 12" fill="none" stroke="#f5f4f0" stroke-width="2" stroke-linecap="round"/>
+  <g fill="#f5f4f0">
+    <ellipse cx="25" cy="40" rx="4.5" ry="9" transform="rotate(-52 25 40)"/>
+    <ellipse cx="39" cy="31" rx="4" ry="8" transform="rotate(52 39 31)"/>
+    <ellipse cx="26.5" cy="23" rx="3.5" ry="7" transform="rotate(-52 26.5 23)"/>
+    <ellipse cx="32" cy="12" rx="2.6" ry="5"/>
+  </g>
 </svg>

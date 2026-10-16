@@ -1,0 +1,29 @@
+---
+import Arrow from "./Arrow.astro";
+
+// Solid (brand fill) or outline button with the slide-in hover fill and an
+// arrow. The look lives in the `btn` / `btn-outline` utilities in
+// global.css; this component only adds the arrow and the external-link
+// attributes.
+const {
+  href,
+  variant = "solid",
+  external = false,
+  class: className,
+} = Astro.props as {
+  href: string;
+  variant?: "solid" | "outline";
+  external?: boolean;
+  class?: string;
+};
+---
+
+<a
+  href={href}
+  class:list={["btn group", variant === "outline" && "btn-outline", className]}
+  target={external ? "_blank" : undefined}
+  rel={external ? "noopener" : undefined}
+>
+  <slot />
+  <Arrow />
+</a>

@@ -204,15 +204,33 @@ inside an `@theme` block and become **both** CSS variables and utilities:
 
 ```css
 @theme {
-  --color-bg: #fbfbf9; /* -> bg-bg / text-bg / border-bg ... */
-  --color-fg: #1a1a1a;
-  --color-link: #0b3d91;
+  --color-bg: #f5f4f0; /* -> bg-bg / text-bg / border-bg ... */
+  --color-fg: #2b3a3f;
+  --color-accent: #57705b;
 }
 ```
 
 **Use only these tokens** (`bg-bg`, `text-fg`, `text-muted`, `border-border`,
-`bg-surface`, `text-link`). A raw hex or a stock Tailwind color like
+`bg-surface`, `text-link`, `bg-accent`, `bg-accent-strong`, `text-on-accent`,
+`bg-highlight` / `text-highlight`). A raw hex or a stock Tailwind color like
 `text-gray-700` will not follow dark mode.
+
+### Design ("moss") and motion
+
+The template ships with a finished look: warm off-white paper, blue-green ink,
+a moss accent and a muted-gold hairline color; rounded-gothic headings
+(`font-heading`) and serif English labels (`font-en`, `label-en`); buttons
+with a slide-in fill (`btn`, `btn-outline`, `Button.astro`), `TextLink`,
+`SectionHeading` and a botanical sprig (`Botanical.astro`). The home page is a
+full-bleed section layout (`<Base fullBleed>`) with placeholder photos in
+`src/assets/images/`.
+
+Motion is **CSS only** — no GSAP, no extra JavaScript. Markup opts in with
+data attributes (`data-intro`, `data-reveal`, `data-reveal="mask|line|…"`,
+`data-parallax`); scroll reveals use CSS scroll-driven animations
+(`animation-timeline: view()`). Browsers without them, and visitors who
+prefer reduced motion, simply see everything in place. See the "Motion"
+section of `global.css` and rule 12 in `CLAUDE.md`.
 
 ### Dark mode
 

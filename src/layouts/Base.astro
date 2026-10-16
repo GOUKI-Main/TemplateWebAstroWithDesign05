@@ -33,6 +33,9 @@ export type Props = {
   /** Extra JSON-LD nodes appended to the page @graph (e.g. FAQPage). */
   jsonLd?: JsonLd | JsonLd[];
   mainCentered?: boolean;
+  /** Drop the reading column so sections can run edge to edge (home page).
+   *  Each section then brings its own `container-page`. */
+  fullBleed?: boolean;
 };
 
 const {
@@ -46,6 +49,7 @@ const {
   breadcrumbs,
   jsonLd,
   mainCentered = false,
+  fullBleed = false,
 } = Astro.props;
 
 // astro.config.mjs always sets `site` (from site.url in site.ts).
@@ -135,7 +139,8 @@ const graph = siteGraph({
     <main
       id="main"
       class:list={[
-        "container-page flex-1 py-10",
+        "flex-1",
+        !fullBleed && "container-narrow py-12 md:py-16",
         { "grid place-items-center": mainCentered },
       ]}
     >
